@@ -18,7 +18,7 @@ const errorHandler = async (err, req, res, next) => {
       (code = 400), (message = errors);
       break;
     case "blogNotFound":
-      (code = 404), (message = 'Blog data is not found');
+      (code = 404), (message = "Blog data is not found");
       break;
     case 'imageInvalid':
       code = 400, message = 'File should be an Image format and maximum size is 1,525 mb'
