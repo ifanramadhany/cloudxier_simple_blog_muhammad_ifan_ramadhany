@@ -1,11 +1,24 @@
-import React, { useState, Fragment } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useState, Fragment, useEffect } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchBlogById } from "../store/actions/blogAction";
 
 export default function DetailPage() {
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    dispatch(fetchBlogById(id));
+  }, []);
 
   const toHomePage = () => history.push("/");
+
+  const { blogById, isLoading, error } = useSelector((state) => state.blogState)
+
+  console.log(blogById);
 
   const [buttonMenu, setButtonMenu] = useState(false);
   const [addNewBlog, setAddNewBlog] = useState(false);
@@ -491,15 +504,14 @@ export default function DetailPage() {
             <div className="card-detail md:mx-20 lg:mx-20 my-3 mx-4">
               <div className="main-image-detail flex justify-center">
                 <img
-                  src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
+                  src={blogById.imgUrl}
                   alt=""
                   className="rounded-md"
                 />
               </div>
               <div className="title-image mt-2 flex justify-between items-center">
                 <span className="text-sm text-gray-500 font-extrabold">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Nesciunt, mollitia!
+                  {blogById.title}
                 </span>
                 <button className="hover:text-blue-600">
                   <svg
@@ -520,21 +532,7 @@ export default function DetailPage() {
               </div>
               <div className="comment-image-detail mb-24 flex flex-col justify-between items-start">
                 <span className="mt-2 text-xs">
-                  It is a long established fact that a reader will be distracted
-                  by the readable content of a page when looking at its layout.
-                  The point of using Lorem Ipsum is that it has a more-or-less
-                  normal distribution of letters, as opposed to using 'Content
-                  here, content here', making it look like readable English.
-                  Many desktop publishing packages and web page editors now use
-                  Lorem Ipsum as their default model text, and a search for
-                  'lorem ipsum' will uncover It is a long established fact that
-                  a reader will be distracted by the readable content of a page
-                  when looking at its layout. The point of using Lorem Ipsum is
-                  that it has a more-or-less normal distribution of letters, as
-                  opposed to using 'Content here, content here', making it look
-                  like readable English. Many desktop publishing packages and
-                  web page editors now use Lorem Ipsum as their default model
-                  text, and a search for 'lorem ipsum' will uncover{" "}
+                  {blogById.content}
                 </span>
                 <div className="w-full flex justify-between">
                   <button
