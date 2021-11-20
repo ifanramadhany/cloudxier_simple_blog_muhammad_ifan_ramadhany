@@ -1,9 +1,13 @@
 import React, { useState, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 
-
 export default function LandingPage() {
+  const history = useHistory();
+
+  const toHomePage = () => history.push("/");
+  const toDetailPage = () => history.push("/detail-blog/3");
+
   const [buttonMenu, setButtonMenu] = useState(false);
   const [addNewBlog, setAddNewBlog] = useState(false);
 
@@ -52,22 +56,66 @@ export default function LandingPage() {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Payment successful
+                  Create New Blog
                 </Dialog.Title>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">
-                    Your payment has been successfully submitted. We’ve sent you
-                    an email with all of the details of your order.
-                  </p>
+                <div class="form-control my-2">
+                  <label class="label">
+                    <span class="label-text">Title</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="blog title.."
+                    class="input input-bordered"
+                  ></input>
                 </div>
 
-                <div className="mt-4">
+                <div class="form-control my-2">
+                  <label class="label">
+                    <span class="label-text">Author</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="your name.."
+                    class="input input-bordered"
+                  ></input>
+                </div>
+
+                <div class="form-control my-2">
+                  <label class="label">
+                    <span class="label-text">Content</span>
+                  </label>
+                  <textarea
+                    type="text"
+                    placeholder="content.."
+                    class="input input-bordered"
+                  ></textarea>
+                </div>
+
+                <div class="form-control my-2">
+                  <label class="label">
+                    <span class="label-text">Image</span>
+                  </label>
+                  <input
+                    type="file"
+                    className="mb-4"
+                  ></input>
+                </div>
+
+                <div className="mt-4 flex justify-between">
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                     onClick={closeModalAddBlog}
                   >
-                    Got it, thanks!
+                    Create
+                  </button>
+
+                  <button
+                    type="button"
+                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-red-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+                    onClick={closeModalAddBlog}
+                  >
+                    Cancel
                   </button>
                 </div>
               </div>
@@ -134,7 +182,7 @@ export default function LandingPage() {
           <div className="">
             <button
               className="rounded w-40 text-white mx-4 my-4 py-1 px-2 flex justify-start items-center transition duration-200 border border-gray-800 hover:border-gray-300 text-gray-100 hover:bg-gray-300 hover:text-gray-800"
-              
+              onClick={toHomePage}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +253,7 @@ export default function LandingPage() {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
+              class="h-6 w-6 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -230,11 +278,15 @@ export default function LandingPage() {
           <div className="flex md:justify-center lg:justify-center md:flex-wrap lg:flex-wrap flex-col md:flex-row lg:flex-row">
             {/* card  */}
 
-            <div className="card my-3 mx-4">
-              <div className="main-image cursor-pointer flex justify-center">
+            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
+              <div
+                className="main-image cursor-pointer flex justify-center"
+                onClick={toDetailPage}
+              >
                 <img
                   src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
                   alt=""
+                  className="rounded-md"
                 />
               </div>
               <div className="title-image flex justify-between items-center">
@@ -265,11 +317,15 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="card my-3 mx-4">
-              <div className="main-image cursor-pointer flex justify-center">
+            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
+              <div
+                className="main-image cursor-pointer flex justify-center"
+                onClick={toDetailPage}
+              >
                 <img
                   src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
                   alt=""
+                  className="rounded-md"
                 />
               </div>
               <div className="title-image flex justify-between items-center">
@@ -300,11 +356,15 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="card my-3 mx-4">
-              <div className="main-image cursor-pointer flex justify-center">
+            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
+              <div
+                className="main-image cursor-pointer flex justify-center"
+                onClick={toDetailPage}
+              >
                 <img
                   src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
                   alt=""
+                  className="rounded-md"
                 />
               </div>
               <div className="title-image flex justify-between items-center">
@@ -335,11 +395,15 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="card my-3 mx-4">
-              <div className="main-image cursor-pointer flex justify-center">
+            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
+              <div
+                className="main-image cursor-pointer flex justify-center"
+                onClick={toDetailPage}
+              >
                 <img
                   src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
                   alt=""
+                  className="rounded-md"
                 />
               </div>
               <div className="title-image flex justify-between items-center">
