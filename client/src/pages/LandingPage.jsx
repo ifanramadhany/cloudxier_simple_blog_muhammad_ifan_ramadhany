@@ -1,12 +1,24 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
+import { useSelector, useDispatch } from 'react-redux'
+import CardBlog from "../components/CardBlog";
+import { fetchBlogs } from "../store/actions/blogAction";
+import ReactLoading from "react-loading";
 
 export default function LandingPage() {
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const { blogs, isLoading, error } = useSelector((state) => state.blogState)
+
+  useEffect(()=> {
+    dispatch(fetchBlogs())  
+  }, [dispatch])
+
+  console.log(blogs);
 
   const toHomePage = () => history.push("/");
-  const toDetailPage = () => history.push("/detail-blog/3");
 
   const [buttonMenu, setButtonMenu] = useState(false);
   const [addNewBlog, setAddNewBlog] = useState(false);
@@ -278,161 +290,21 @@ export default function LandingPage() {
           <div className="flex md:justify-center lg:justify-center md:flex-wrap lg:flex-wrap flex-col md:flex-row lg:flex-row">
             {/* card  */}
 
-            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
-              <div
-                className="main-image cursor-pointer flex justify-center"
-                onClick={toDetailPage}
-              >
-                <img
-                  src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
-                  alt=""
-                  className="rounded-md"
-                />
-              </div>
-              <div className="title-image flex justify-between items-center">
-                <span className="text-sm text-gray-500 font-extrabold">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Nesciunt, mollitia!
-                </span>
-                <button className="hover:text-blue-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="comment-image flex justify-between items-center">
-                <span className="text-xs">10 comments</span>
-                <span className="text-xs">by Laurel Jones</span>
-              </div>
-            </div>
+            {isLoading ? <ReactLoading className="m-auto mt-20" type="spin" color="#374151"/> : null }
 
-            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
-              <div
-                className="main-image cursor-pointer flex justify-center"
-                onClick={toDetailPage}
-              >
-                <img
-                  src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
-                  alt=""
-                  className="rounded-md"
-                />
-              </div>
-              <div className="title-image flex justify-between items-center">
-                <span className="text-sm text-gray-500 font-extrabold">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Nesciunt, mollitia!
-                </span>
-                <button className="hover:text-blue-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="comment-image flex justify-between items-center">
-                <span className="text-xs">10 comments</span>
-                <span className="text-xs">by Laurel Jones</span>
-              </div>
-            </div>
+            {error ? <span className="m-auto mt-20">Something went error, {error.message}</span> : null }
 
-            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
-              <div
-                className="main-image cursor-pointer flex justify-center"
-                onClick={toDetailPage}
-              >
-                <img
-                  src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
-                  alt=""
-                  className="rounded-md"
-                />
-              </div>
-              <div className="title-image flex justify-between items-center">
-                <span className="text-sm text-gray-500 font-extrabold">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Nesciunt, mollitia!
-                </span>
-                <button className="hover:text-blue-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="comment-image flex justify-between items-center">
-                <span className="text-xs">10 comments</span>
-                <span className="text-xs">by Laurel Jones</span>
-              </div>
-            </div>
+            {
+              blogs.map((item)=> (
+                <CardBlog
+                key={item.id}
+                item={item}
+                ></CardBlog>
+              ))
+            }
 
-            <div className="card rounded-md md:mx-20 lg:mx-20 my-3 mx-4">
-              <div
-                className="main-image cursor-pointer flex justify-center"
-                onClick={toDetailPage}
-              >
-                <img
-                  src="https://ik.imagekit.io/o77c8cfipim/photo-1637262448017-0fbbec87a898_rpfHNlbXRB5.jpeg"
-                  alt=""
-                  className="rounded-md"
-                />
-              </div>
-              <div className="title-image flex justify-between items-center">
-                <span className="text-sm text-gray-500 font-extrabold">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Nesciunt, mollitia!
-                </span>
-                <button className="hover:text-blue-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="comment-image flex justify-between items-center">
-                <span className="text-xs">10 comments</span>
-                <span className="text-xs">by Laurel Jones</span>
-              </div>
-            </div>
+            
+            
           </div>
         </div>
       </div>
