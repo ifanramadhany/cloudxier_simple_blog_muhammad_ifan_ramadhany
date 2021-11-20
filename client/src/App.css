@@ -39,12 +39,27 @@
 
 .card {
   height: 300px;
-  width: 450px;
+  width: 400px;
   grid-template-rows: 8fr 1fr 1fr;
   grid-template-areas:
     "main-image"
     "title-image"
     "comment-image";
+}
+
+.card-detail {
+  height: auto;
+  width: 400px;
+  grid-template-rows: 8fr 1fr 1fr;
+  grid-template-areas:
+    "main-image-detail"
+    "title-image"
+    "comment-image";
+}
+
+.main-image-detail img {
+  width: 100%;
+  height: 225px;
 }
 
 .main-image {
@@ -66,6 +81,8 @@ img {
   border-radius: 10px;
 }
 
+
+
 .title-image {
   /* background-color: aqua; */
   height: 15%;
@@ -74,6 +91,10 @@ img {
 .comment-image {
   /* background-color: red; */
   height: 10%;
+}
+
+.comment-image-detail {
+  height: auto;
 }
 
 .sidebar {
