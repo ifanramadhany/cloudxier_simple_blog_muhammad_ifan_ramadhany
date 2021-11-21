@@ -46,6 +46,7 @@ class BlogController {
   static async updateBlog(req, res, next) {
     const { id } = req.params
     const { title, content, author, imgUrl } = req.body;
+    console.log(req.body);
     try {
       const blogData = await Blog.findByPk(id)
       if(!blogData) {

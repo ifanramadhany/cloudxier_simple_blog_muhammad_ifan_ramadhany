@@ -1,15 +1,18 @@
-import { GET_BLOGS, GET_BLOG_BY_ID, SET_ERROR_BLOG, SET_LOADING_BLOG } from "../keys"
+import { GET_BLOGS, GET_BLOG_BY_ID, SET_ERROR_BLOG, SET_FLAGGER, SET_LOADING_BLOG } from "../keys"
 
 const initialState = {
   blogs: [],
   blogById: {},
   isLoading: false,
-  error: null
+  error: null,
+  flagger: false
 }
 
 export default function reducer (state = initialState, action) {
   const { type, payload } = action
   switch (type) {
+    case SET_FLAGGER:
+      return { ...state, flagger: payload }
     case SET_LOADING_BLOG:
       return { ...state, isLoading: payload }
     case SET_ERROR_BLOG:

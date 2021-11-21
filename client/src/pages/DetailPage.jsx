@@ -2,7 +2,14 @@ import React, { useState, Fragment, useEffect } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchBlogById } from "../store/actions/blogAction";
+import {
+  createBlog,
+  editBlog,
+  fetchBlogById,
+  setLoading,
+  deleteBlogAction,
+} from "../store/actions/blogAction";
+import ReactLoading from "react-loading";
 
 export default function DetailPage() {
   const history = useHistory();
@@ -10,16 +17,11 @@ export default function DetailPage() {
 
   const { id } = useParams();
 
-  useEffect(() => {
-    dispatch(fetchBlogById(id));
-  }, []);
+  const { blogById, isLoading, error, flagger } = useSelector(
+    (state) => state.blogState
+  );
 
-  const toHomePage = () => history.push("/");
-
-  const { blogById, isLoading, error } = useSelector((state) => state.blogState)
-
-  console.log(blogById);
-
+  const [changeImage, setChangeImage] = useState(false);
   const [buttonMenu, setButtonMenu] = useState(false);
   const [addNewBlog, setAddNewBlog] = useState(false);
   const [editBlogData, setEditBlogData] = useState(false);
@@ -33,6 +35,157 @@ export default function DetailPage() {
 
   const closeModalDelete = () => setDeleteBlog(false);
   const openModalDelete = () => setDeleteBlog(true);
+
+  const [userInputEdit, setUserInputEdit] = useState({
+    title: "",
+    author: "",
+    content: "",
+    imgUrl: "",
+  });
+  const [userInputAdd, setUserInputAdd] = useState({
+    title: "",
+    author: "",
+    content: "",
+  });
+  const [imgUrl, setImgUrl] = useState(null);
+  const [imgUrlEdit, setImgUrlEdit] = useState(null);
+
+  const addImage = (e) => {
+    setImgUrl(e.target.files[0]);
+  };
+
+  const editImage = (e) => {
+    setImgUrlEdit(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    dispatch(fetchBlogById(id));
+  }, []);
+
+  useEffect(() => {
+    setUserInputEdit(blogById);
+  }, [blogById]);
+
+  const toHomePage = () => history.push("/");
+
+  const onChangeInputAdd = (e, key) => {
+    // console.log(e, key);
+    const newObj = { ...userInputAdd };
+    newObj[key] = e.target.value;
+
+    setUserInputAdd(newObj);
+    console.log(newObj);
+  };
+
+  function clearAll() {
+    setUserInputAdd({
+      title: "",
+      author: "",
+      content: "",
+    });
+    setImgUrl(null);
+    setButtonMenu(false);
+  }
+
+  function clearAllEdit() {
+    setUserInputEdit({
+      title: "",
+      author: "",
+      content: "",
+    });
+    setImgUrlEdit(null);
+    setButtonMenu(false);
+  }
+
+  const addBlog = () => {
+    console.log(imgUrl);
+    const form = new FormData();
+    form.append("title", userInputAdd.title);
+    form.append("author", userInputAdd.author);
+    form.append("content", userInputAdd.content);
+    form.append("imgUrl", imgUrl);
+
+    // // inspect values
+    // for (var pair of form.entries()) {
+    //   console.log(pair[0]+ ' - ' + pair[1]);
+    // }
+
+    dispatch(createBlog(form)).then(() => {
+      console.log(error, "ini di detail page");
+      if (error === null) {
+        closeModalAddBlog();
+        clearAll();
+        toHomePage();
+      }
+      dispatch(setLoading(false));
+    });
+  };
+
+  const editBlogHandle = () => {
+    if (!imgUrlEdit) {
+      const formEdit = new FormData();
+      formEdit.append("title", userInputEdit.title);
+      formEdit.append("author", userInputEdit.author);
+      formEdit.append("content", userInputEdit.content);
+      // formEdit.append("imgUrl", imgUrlEdit);
+      const data = {
+        formEdit,
+        id,
+      };
+
+      console.log(data);
+
+      dispatch(editBlog(data)).then(() => {
+        console.log(error, "ini di detail page");
+        if (error === null) {
+          closeModalEditBlog();
+          clearAllEdit();
+          toHomePage();
+        }
+        dispatch(setLoading(false));
+      });
+    } else {
+      const formEdit = new FormData();
+      formEdit.append("title", userInputEdit.title);
+      formEdit.append("author", userInputEdit.author);
+      formEdit.append("content", userInputEdit.content);
+      formEdit.append("imgUrl", imgUrlEdit);
+
+      // // inspect values
+      // for (var pair of form.entries()) {
+      //   console.log(pair[0]+ ' - ' + pair[1]);
+      // }
+
+      const data = {
+        formEdit,
+        id,
+      };
+
+      dispatch(editBlog(data)).then(() => {
+        console.log(error, "ini di detail page");
+        if (error === null) {
+          closeModalEditBlog();
+          clearAllEdit();
+          toHomePage();
+        }
+        dispatch(setLoading(false));
+      });
+    }
+  };
+
+  const onChangeInputEdit = (e, key) => {
+    // console.log(e, key);
+    const newObjEdit = { ...userInputEdit };
+    newObjEdit[key] = e.target.value;
+    setUserInputEdit(newObjEdit);
+  };
+
+  const deleteHandle = () => {
+    dispatch(deleteBlogAction(id)).then(() => {
+      toHomePage()
+      closeModalDelete();
+    });
+  };
 
   return (
     <>
@@ -78,12 +231,25 @@ export default function DetailPage() {
                 >
                   Are you sure to delete the blog ?
                 </Dialog.Title>
+                {isLoading ? (
+                  <ReactLoading
+                    className="absolute inset-1/2"
+                    type="spin"
+                    color="#374151"
+                  />
+                ) : null}
+
+                {error ? (
+                  <span className="text-sm text-red-400 w-auto">
+                    Something went error, {error.message}
+                  </span>
+                ) : null}
 
                 <div className="mt-4 flex justify-between">
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                    onClick={closeModalDelete}
+                    onClick={deleteHandle}
                   >
                     Yes, delete!
                   </button>
@@ -144,6 +310,14 @@ export default function DetailPage() {
                 >
                   Create New Blog
                 </Dialog.Title>
+                {isLoading ? (
+                  <ReactLoading
+                    className="absolute inset-1/2"
+                    type="spin"
+                    color="#374151"
+                  />
+                ) : null}
+
                 <div class="form-control my-2">
                   <label class="label">
                     <span class="label-text">Title</span>
@@ -152,6 +326,8 @@ export default function DetailPage() {
                     type="text"
                     placeholder="blog title.."
                     class="input input-bordered"
+                    onChange={(e) => onChangeInputAdd(e, "title")}
+                    value={userInputAdd.title}
                   ></input>
                 </div>
 
@@ -163,6 +339,8 @@ export default function DetailPage() {
                     type="text"
                     placeholder="your name.."
                     class="input input-bordered"
+                    onChange={(e) => onChangeInputAdd(e, "author")}
+                    value={userInputAdd.author}
                   ></input>
                 </div>
 
@@ -174,6 +352,8 @@ export default function DetailPage() {
                     type="text"
                     placeholder="content.."
                     class="input input-bordered"
+                    onChange={(e) => onChangeInputAdd(e, "content")}
+                    value={userInputAdd.content}
                   ></textarea>
                 </div>
 
@@ -181,14 +361,24 @@ export default function DetailPage() {
                   <label class="label">
                     <span class="label-text">Image</span>
                   </label>
-                  <input type="file" className="mb-4"></input>
+                  <input
+                    type="file"
+                    className="mb-4"
+                    onChange={addImage}
+                  ></input>
                 </div>
+
+                {error ? (
+                  <span className="text-sm text-red-400 w-auto">
+                    Something went error, {error.message}
+                  </span>
+                ) : null}
 
                 <div className="mt-4 flex justify-between">
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                    onClick={closeModalAddBlog}
+                    onClick={addBlog}
                   >
                     Create
                   </button>
@@ -247,15 +437,24 @@ export default function DetailPage() {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Edit Blog data with ID : 1
+                  Edit Blog data with ID : {blogById.id}
                 </Dialog.Title>
+                {isLoading ? (
+                  <ReactLoading
+                    className="absolute inset-1/2"
+                    type="spin"
+                    color="#374151"
+                  />
+                ) : null}
+
                 <div class="form-control my-2">
                   <label class="label">
                     <span class="label-text">Title</span>
                   </label>
                   <input
                     type="text"
-                    value="blog title.."
+                    value={userInputEdit.title}
+                    onChange={(e) => onChangeInputEdit(e, "title")}
                     class="input input-bordered"
                   ></input>
                 </div>
@@ -266,34 +465,75 @@ export default function DetailPage() {
                   </label>
                   <input
                     type="text"
-                    value="your name.."
+                    onChange={(e) => onChangeInputEdit(e, "author")}
+                    value={userInputEdit.author}
                     class="input input-bordered"
                   ></input>
                 </div>
 
-                <div class="form-control my-2">
+                <div className="form-control my-2">
                   <label class="label">
                     <span class="label-text">Content</span>
                   </label>
                   <textarea
                     type="text"
-                    value="content.."
+                    value={userInputEdit.content}
+                    onChange={(e) => onChangeInputEdit(e, "content")}
                     class="input input-bordered"
                   ></textarea>
                 </div>
 
-                <div class="form-control my-2">
+                <div className={`${changeImage ? "hidden" : "mt-5 flex"}`}>
+                  <img
+                    className="image-edit"
+                    src={userInputEdit.imgUrl}
+                    alt=""
+                  />
+                  <button
+                    className="bg-gray-300 ml-2 w-5 h-5 rounded flex justify-center items-center hover:bg-gray-600 hover:text-gray-100"
+                    onClick={() => setChangeImage(!changeImage)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-7 w-7"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <div
+                  className={`${changeImage ? "form-control my-2" : "hidden"}`}
+                >
                   <label class="label">
                     <span class="label-text">Image</span>
                   </label>
-                  <input type="file" className="mb-4"></input>
+                  <input
+                    type="file"
+                    className="mb-4"
+                    onChange={editImage}
+                  ></input>
                 </div>
+
+                {error ? (
+                  <span className="text-sm text-red-400 w-auto">
+                    Something went error, {error.message}
+                  </span>
+                ) : null}
 
                 <div className="mt-4 flex justify-between">
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                    onClick={closeModalEditBlog}
+                    onClick={editBlogHandle}
                   >
                     Save
                   </button>
@@ -301,7 +541,9 @@ export default function DetailPage() {
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-red-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
-                    onClick={closeModalEditBlog}
+                    onClick={() => (
+                      setChangeImage(false), closeModalEditBlog()
+                    )}
                   >
                     Cancel
                   </button>
@@ -501,13 +743,22 @@ export default function DetailPage() {
           <div className="flex md:justify-center lg:justify-center md:flex-wrap lg:flex-wrap flex-col md:flex-row lg:flex-row">
             {/* card  */}
 
+            {isLoading ? (
+              <ReactLoading
+                className="absolute absolute inset-1/2"
+                type="spin"
+                color="#374151"
+              />
+            ) : null}
+
             <div className="card-detail md:mx-20 lg:mx-20 my-3 mx-4">
+              {error ? (
+                <span className="text-sm text-red-400 w-auto">
+                  Something went error, {error.message}
+                </span>
+              ) : null}
               <div className="main-image-detail flex justify-center">
-                <img
-                  src={blogById.imgUrl}
-                  alt=""
-                  className="rounded-md"
-                />
+                <img src={blogById.imgUrl} alt="" className="rounded-md" />
               </div>
               <div className="title-image mt-2 flex justify-between items-center">
                 <span className="text-sm text-gray-500 font-extrabold">
@@ -531,9 +782,7 @@ export default function DetailPage() {
                 </button>
               </div>
               <div className="comment-image-detail mb-24 flex flex-col justify-between items-start">
-                <span className="mt-2 text-xs">
-                  {blogById.content}
-                </span>
+                <span className="mt-2 text-xs">{blogById.content}</span>
                 <div className="w-full flex justify-between">
                   <button
                     class="btn btn-sm mt-5 bg-blue-500 border-blue-500"

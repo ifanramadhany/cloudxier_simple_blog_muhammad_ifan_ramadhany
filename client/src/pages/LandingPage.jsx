@@ -3,8 +3,9 @@ import { Link, useHistory } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSelector, useDispatch } from 'react-redux'
 import CardBlog from "../components/CardBlog";
-import { fetchBlogs } from "../store/actions/blogAction";
+import { createBlog, fetchBlogs, setLoading, setError  } from "../store/actions/blogAction";
 import ReactLoading from "react-loading";
+
 
 export default function LandingPage() {
   const history = useHistory();
@@ -22,9 +23,64 @@ export default function LandingPage() {
 
   const [buttonMenu, setButtonMenu] = useState(false);
   const [addNewBlog, setAddNewBlog] = useState(false);
+  const [userInputAdd, setUserInputAdd] = useState({
+    title: '',
+    author: '',
+    content: '',
+  })
+  const [imgUrl, setImgUrl] = useState(null);
+
+  const addImage = (e) => {
+    setImgUrl(e.target.files[0]);
+  };
 
   const closeModalAddBlog = () => setAddNewBlog(false);
   const openModalAddBlog = () => setAddNewBlog(true);
+
+  const onChangeInputAdd = (e, key) => {
+    // console.log(e, key);
+    const newObj = {...userInputAdd}
+    newObj[key] = e.target.value
+    
+    setUserInputAdd(newObj)
+    console.log(newObj);
+  }
+
+  function clearAll() {
+    setUserInputAdd({
+      title: '',
+      author: '',
+      content: '',
+    })
+    setImgUrl(null)
+    setButtonMenu(false)
+  }
+
+  const addBlog = () => {
+    console.log(imgUrl);
+    const form = new FormData();
+    form.append("title", userInputAdd.title);
+    form.append("author", userInputAdd.author);
+    form.append("content", userInputAdd.content);
+    form.append("imgUrl", imgUrl);
+
+    // // inspect values 
+    // for (var pair of form.entries()) {
+    //   console.log(pair[0]+ ' - ' + pair[1]); 
+    // }
+
+    dispatch(createBlog(form))
+    .then(() => {
+      console.log(error, 'ini di landing page');
+        if(error === null) {
+          closeModalAddBlog()
+          clearAll();
+          toHomePage();
+        }
+        dispatch(setLoading(false))
+    })
+  }
+  
 
   return (
     <>
@@ -70,6 +126,8 @@ export default function LandingPage() {
                 >
                   Create New Blog
                 </Dialog.Title>
+                {isLoading ? <ReactLoading className="absolute inset-1/2" type="spin" color="#374151"/> : null }
+
                 <div class="form-control my-2">
                   <label class="label">
                     <span class="label-text">Title</span>
@@ -78,6 +136,7 @@ export default function LandingPage() {
                     type="text"
                     placeholder="blog title.."
                     class="input input-bordered"
+                    onChange={(e) => onChangeInputAdd(e, 'title')} value={userInputAdd.title}
                   ></input>
                 </div>
 
@@ -89,6 +148,7 @@ export default function LandingPage() {
                     type="text"
                     placeholder="your name.."
                     class="input input-bordered"
+                    onChange={(e) => onChangeInputAdd(e, 'author')} value={userInputAdd.author}
                   ></input>
                 </div>
 
@@ -100,6 +160,7 @@ export default function LandingPage() {
                     type="text"
                     placeholder="content.."
                     class="input input-bordered"
+                    onChange={(e) => onChangeInputAdd(e, 'content')} value={userInputAdd.content}
                   ></textarea>
                 </div>
 
@@ -110,14 +171,17 @@ export default function LandingPage() {
                   <input
                     type="file"
                     className="mb-4"
+                    onChange={addImage}
                   ></input>
                 </div>
+
+                {error ? <span className="text-sm text-red-400 w-auto">Something went error, {error.message}</span> : null }
 
                 <div className="mt-4 flex justify-between">
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                    onClick={closeModalAddBlog}
+                    onClick={addBlog}
                   >
                     Create
                   </button>
@@ -290,9 +354,9 @@ export default function LandingPage() {
           <div className="flex md:justify-center lg:justify-center md:flex-wrap lg:flex-wrap flex-col md:flex-row lg:flex-row">
             {/* card  */}
 
-            {isLoading ? <ReactLoading className="m-auto mt-20" type="spin" color="#374151"/> : null }
+            {isLoading ? <ReactLoading className="absolute inset-1/2" type="spin" color="#374151"/> : null }
 
-            {error ? <span className="m-auto mt-20">Something went error, {error.message}</span> : null }
+            {error ? <span className="absolute inset-1/2 text-sm text-red-400">Something went error, {error.message}</span> : null }
 
             {
               blogs.map((item)=> (
