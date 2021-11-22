@@ -39,7 +39,7 @@
 
 .card {
   height: 300px;
-  width: 400px;
+  width: 350px;
   grid-template-rows: 8fr 1fr 1fr;
   grid-template-areas:
     "main-image"
@@ -49,7 +49,7 @@
 
 .card-detail {
   height: auto;
-  width: 400px;
+  width: 350px;
   grid-template-rows: 8fr 1fr 1fr;
   grid-template-areas:
     "main-image-detail"

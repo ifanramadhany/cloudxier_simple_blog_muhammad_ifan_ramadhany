@@ -8,6 +8,7 @@ import {
   fetchBlogById,
   setLoading,
   deleteBlogAction,
+  setError,
 } from "../store/actions/blogAction";
 import ReactLoading from "react-loading";
 
@@ -182,7 +183,7 @@ export default function DetailPage() {
 
   const deleteHandle = () => {
     dispatch(deleteBlogAction(id)).then(() => {
-      toHomePage()
+      toHomePage();
       closeModalDelete();
     });
   };
@@ -351,7 +352,7 @@ export default function DetailPage() {
                   <textarea
                     type="text"
                     placeholder="content.."
-                    class="input input-bordered"
+                    className="input input-bordered h-64"
                     onChange={(e) => onChangeInputAdd(e, "content")}
                     value={userInputAdd.content}
                   ></textarea>
@@ -479,7 +480,7 @@ export default function DetailPage() {
                     type="text"
                     value={userInputEdit.content}
                     onChange={(e) => onChangeInputEdit(e, "content")}
-                    class="input input-bordered"
+                    className="input input-bordered h-64"
                   ></textarea>
                 </div>
 

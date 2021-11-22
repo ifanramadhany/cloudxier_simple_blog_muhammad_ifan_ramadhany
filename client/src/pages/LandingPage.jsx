@@ -159,7 +159,7 @@ export default function LandingPage() {
                   <textarea
                     type="text"
                     placeholder="content.."
-                    class="input input-bordered"
+                    className="input input-bordered h-64"
                     onChange={(e) => onChangeInputAdd(e, 'content')} value={userInputAdd.content}
                   ></textarea>
                 </div>
